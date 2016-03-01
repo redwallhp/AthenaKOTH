@@ -1,0 +1,6 @@
+name: AthenaKOTH
+main: io.github.redwallhp.athenakoth.AthenaKOTH
+description: Athena KOTH Game
+author: redwall_hp
+version: ${project.version}
+depend: [AthenaGM]
