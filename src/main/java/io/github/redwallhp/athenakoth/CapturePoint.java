@@ -7,6 +7,9 @@ import io.github.redwallhp.athenagm.matches.Team;
 import io.github.redwallhp.athenagm.utilities.ItemUtil;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -29,6 +32,7 @@ public class CapturePoint {
     private Team capturingTeam;
     private Player capturingPlayer;
     private CaptureTask captureTask;
+    private BossBar captureBar;
 
 
     public CapturePoint(Match match) throws IOException, ConfigurationException {
@@ -42,6 +46,7 @@ public class CapturePoint {
         this.capturingTeam = null;
         this.capturingPlayer = null;
         this.captureTask = null;
+        this.captureBar = null;
 
         this.beacon = new Vector(yaml.getInt("beacon.x"),  yaml.getInt("beacon.y"), yaml.getInt("beacon.z"));
         this.captureTime = yaml.getInt("capture_time", 6);
@@ -63,10 +68,7 @@ public class CapturePoint {
     public void startCapture(AthenaKOTH plugin, Team team, Player player) {
         if (capturingTeam != null) {
             if (!capturingTeam.equals(team)) {
-                captureTask.cancel();
-                captureTask = null;
-                capturingTeam = null;
-                capturingPlayer = null;
+                stopCaptureTask();
                 match.playSound(Sound.ENTITY_ITEM_BREAK);
             }
             return;
@@ -75,6 +77,7 @@ public class CapturePoint {
         this.capturingTeam = team;
         this.capturingPlayer = player;
         this.captureTask = new CaptureTask(plugin, this);
+        createCaptureBar(team);
     }
 
 
@@ -92,10 +95,12 @@ public class CapturePoint {
 
 
     public void stopCaptureTask() {
-        this.captureTask.cancel();
+        if (this.captureTask != null) this.captureTask.cancel();
+        if (this.captureBar != null) this.captureBar.removeAll();
         this.capturingTeam = null;
         this.capturingPlayer = null;
         this.captureTask = null;
+        this.captureBar = null;
     }
 
 
@@ -138,6 +143,34 @@ public class CapturePoint {
             }
         }
         return false;
+    }
+
+
+    /**
+     * Create a new capture bar at the top of the screen when a team starts capturing.
+     * @param team The team capturing
+     */
+    private void createCaptureBar(Team team) {
+        String title = String.format("%s%s is capturing...", team.getColoredName(), ChatColor.RESET);
+        captureBar = match.getPlugin().getServer().createBossBar(title, BarColor.PURPLE, BarStyle.SOLID);
+        for (Player p : team.getMatch().getAllPlayers()) {
+            captureBar.addPlayer(p);
+        }
+    }
+
+
+    /**
+     * Calculate and update the capture bar percentage
+     * @param seconds Seconds progressed toward the capture limit
+     */
+    public void setBarProgress(int seconds) {
+        double progress;
+        try {
+            progress = (double)seconds / (double)captureTime;
+        } catch (ArithmeticException ex) {
+            progress = 1.0;
+        }
+        captureBar.setProgress(progress);
     }
 
 

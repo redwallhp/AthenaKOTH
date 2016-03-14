@@ -30,6 +30,7 @@ public class CaptureTask extends BukkitRunnable {
             return;
         }
 
+        cap.setBarProgress(ticks);
         cap.getMatch().playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
 
         // If the capturing team doesn't stay near the point, the capture will stop after
