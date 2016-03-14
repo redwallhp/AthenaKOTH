@@ -67,11 +67,11 @@ public class CapturePoint {
                 captureTask = null;
                 capturingTeam = null;
                 capturingPlayer = null;
-                match.playSound(Sound.ITEM_BREAK);
+                match.playSound(Sound.ENTITY_ITEM_BREAK);
             }
             return;
         }
-        match.playSound(Sound.CLICK);
+        match.playSound(Sound.UI_BUTTON_CLICK);
         this.capturingTeam = team;
         this.capturingPlayer = player;
         this.captureTask = new CaptureTask(plugin, this);
@@ -84,7 +84,7 @@ public class CapturePoint {
     public void capture() {
         this.owner = capturingTeam;
         updateBeaconGlass();
-        match.playSound(Sound.WITHER_SPAWN);
+        match.playSound(Sound.ENTITY_WITHER_SPAWN);
         PlayerScorePointEvent event = new PlayerScorePointEvent(capturingPlayer, capturingTeam, 1);
         Bukkit.getPluginManager().callEvent(event);
         stopCaptureTask();
