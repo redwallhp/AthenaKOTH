@@ -55,8 +55,11 @@ public class KOTHListener implements Listener {
             Vector beacon = cap.getBeacon();
             Vector glass = cap.getBeacon().clone().setY(cap.getBeacon().getY() + 1);
             Vector clicked = event.getClickedBlock().getLocation().toVector();
-            if ( (clicked.equals(beacon) || clicked.equals(glass)) && !playerTeam.equals(cap.getOwner()) ) {
-                cap.startCapture(plugin, playerTeam, event.getPlayer());
+            if ((clicked.equals(beacon) || clicked.equals(glass))) {
+                event.setCancelled(true);
+                if (!playerTeam.equals(cap.getOwner())) {
+                    cap.startCapture(plugin, playerTeam, event.getPlayer());
+                }
             }
         }
     }
