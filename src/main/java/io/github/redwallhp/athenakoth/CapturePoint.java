@@ -94,6 +94,9 @@ public class CapturePoint {
     }
 
 
+    /**
+     * Clear the capture timer and associated data
+     */
     public void stopCaptureTask() {
         if (this.captureTask != null) this.captureTask.cancel();
         if (this.captureBar != null) this.captureBar.removeAll();
@@ -174,36 +177,58 @@ public class CapturePoint {
     }
 
 
+    /**
+     * Get the coordinates of the beacon block
+     */
     public Vector getBeacon() {
         return beacon;
     }
 
 
+    /**
+     * Get the time, in seconds, it takes to capture this point
+     */
     public int getCaptureTime() {
         return captureTime;
     }
 
 
+    /**
+     * Get the Team that currently holds the capture point
+     * @return Team object, or null if nobody owns the point
+     */
     public Team getOwner() {
         return owner;
     }
 
 
+    /**
+     * Set the Team that holds the capture point
+     */
     public void setOwner(Team owner) {
         this.owner = owner;
     }
 
 
+    /**
+     * Get the Match this capture point is associated with
+     */
     public Match getMatch() {
         return match;
     }
 
 
+    /**
+     * Get the Team that is currently capturing the point
+     */
     public Team getCapturingTeam() {
         return capturingTeam;
     }
 
 
+    /**
+     * Get the Player that is currently capturing the point
+     */
     public Player getCapturingPlayer() {
         return capturingPlayer;
     }

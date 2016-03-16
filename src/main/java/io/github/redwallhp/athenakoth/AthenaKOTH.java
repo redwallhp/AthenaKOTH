@@ -29,6 +29,10 @@ public class AthenaKOTH extends JavaPlugin {
     }
 
 
+    /**
+     * Load the server's AthenaGM instance, returning false if AthenaGM is not installed.
+     * @return true if AthenaGM is installed and active, false otherwise
+     */
     private boolean checkAthena() {
         Plugin plugin = getServer().getPluginManager().getPlugin("AthenaGM");
         if (plugin == null || !(plugin instanceof AthenaGM)) {
@@ -41,16 +45,28 @@ public class AthenaKOTH extends JavaPlugin {
     }
 
 
+    /**
+     * Get the server's AthenaGM instance
+     * @return AthenaGM instance
+     */
     public AthenaGM getAthena() {
         return athena;
     }
 
 
+    /**
+     * Get the active capture points on maps currently active
+     */
     public HashMap<Match, CapturePoint> getCapturePoints() {
         return capturePoints;
     }
 
 
+    /**
+     * Get the capture point for the KOTH match the player is in
+     * @param player The playe to check
+     * @return CapturePoint object for the player's Match, or null
+     */
     public CapturePoint getCapturePointForPlayer(Player player) {
         Arena arena = PlayerUtil.getArenaForPlayer(getAthena().getArenaHandler(), player);
         if (arena != null) {

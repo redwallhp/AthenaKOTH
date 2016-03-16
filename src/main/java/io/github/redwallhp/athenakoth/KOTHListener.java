@@ -24,6 +24,10 @@ public class KOTHListener implements Listener {
     }
 
 
+    /**
+     * When a KOTH match starts, build a CapturePoint object and save it.
+     * Also, update the beacon glass to ensure it's present and accurate.
+     */
     @EventHandler
     public void onMatchCreate(MatchCreateEvent event) {
         if (!isKOTH(event.getMatch())) return;
@@ -37,6 +41,9 @@ public class KOTHListener implements Listener {
     }
 
 
+    /**
+     * Initiate the capture process when a player interacts with the beacon or its glass.
+     */
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!isKOTH(event.getPlayer())) return;
@@ -55,11 +62,19 @@ public class KOTHListener implements Listener {
     }
 
 
+    /**
+     * Check if a given Match/Map is calling for a KOTH gamemode
+     * @param match The Match to check
+     */
     private boolean isKOTH(Match match) {
         return (match.getMap().getGameMode().equalsIgnoreCase("koth"));
     }
 
 
+    /**
+     * Check if a given Player is in a Match/Map calling for a KOTH gamemode
+     * @param player The Player to check
+     */
     private boolean isKOTH(Player player) {
         Arena arena = PlayerUtil.getArenaForPlayer(plugin.getAthena().getArenaHandler(), player);
         return (arena != null && isKOTH(arena.getMatch()));
