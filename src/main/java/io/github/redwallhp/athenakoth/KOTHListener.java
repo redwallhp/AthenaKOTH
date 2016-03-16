@@ -51,7 +51,6 @@ public class KOTHListener implements Listener {
         CapturePoint cap = plugin.getCapturePointForPlayer(event.getPlayer());
         Team playerTeam = PlayerUtil.getTeamForPlayer(plugin.getAthena().getArenaHandler(), event.getPlayer());
         if (cap != null && playerTeam != null && !playerTeam.isSpectator()) {
-            event.setCancelled(true);
             Vector beacon = cap.getBeacon();
             Vector glass = cap.getBeacon().clone().setY(cap.getBeacon().getY() + 1);
             Vector clicked = event.getClickedBlock().getLocation().toVector();
