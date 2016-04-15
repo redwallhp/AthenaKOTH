@@ -71,13 +71,14 @@ public class CapturePoint {
                 stopCaptureTask();
                 match.playSound(Sound.ENTITY_ITEM_BREAK);
             }
-            return;
         }
-        match.playSound(Sound.UI_BUTTON_CLICK);
-        this.capturingTeam = team;
-        this.capturingPlayer = player;
-        this.captureTask = new CaptureTask(plugin, this);
-        createCaptureBar(team);
+        else if (!team.equals(getOwner())) {
+            match.playSound(Sound.UI_BUTTON_CLICK);
+            this.capturingTeam = team;
+            this.capturingPlayer = player;
+            this.captureTask = new CaptureTask(plugin, this);
+            createCaptureBar(team);
+        }
     }
 
 
