@@ -28,6 +28,7 @@ public class CapturePoint {
     private Match match;
     private Vector beacon;
     private int captureTime;
+    private int captureDistance;
     private Team owner;
     private Team capturingTeam;
     private Player capturingPlayer;
@@ -50,6 +51,7 @@ public class CapturePoint {
 
         this.beacon = new Vector(yaml.getInt("beacon.x"),  yaml.getInt("beacon.y"), yaml.getInt("beacon.z"));
         this.captureTime = yaml.getInt("capture_time", 6);
+        this.captureDistance = yaml.getInt("capture_distance", 8);
 
         if (yaml.getConfigurationSection("beacon").getKeys(false).size() < 1) {
             throw new ConfigurationException("koth.yml must specify beacon coordinates!");
@@ -131,7 +133,7 @@ public class CapturePoint {
 
 
     /**
-     * Check if there are any team players within an 8 block radius (+/- 3 blocks vertical) from
+     * Check if there are any team players within an x block radius (+/- 1 blocks vertical) from
      * the capture point.
      * @param team The team to check
      * @return true if there are players present
@@ -140,9 +142,9 @@ public class CapturePoint {
         for (Player player : team.getPlayers()) {
             Location loc = player.getLocation();
             double distance = Math.pow(beacon.getX() - loc.getX(), 2) + Math.pow(beacon.getZ() - loc.getZ(), 2);
-            if (distance < Math.pow(8, 2)) {
-                double maxY = beacon.getY() + 3;
-                double minY = beacon.getY() - 3;
+            if (distance < Math.pow(captureDistance, 2)) {
+                double maxY = beacon.getY() + 1;
+                double minY = beacon.getY() - 1;
                 if (loc.getY() <= maxY && loc.getY() >= minY) return true;
             }
         }
