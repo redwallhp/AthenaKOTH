@@ -7,6 +7,7 @@ import io.github.redwallhp.athenagm.utilities.PlayerUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,14 @@ public class AthenaKOTH extends JavaPlugin {
         if (checkAthena()) {
             listener = new KOTHListener(this);
             capturePoints = new HashMap<Match, CapturePoint>();
+            startScoreIncrementTask();
         }
+    }
+
+
+    @Override
+    public void onDisable() {
+        getServer().getScheduler().cancelTasks(this);
     }
 
 
@@ -77,6 +85,20 @@ public class AthenaKOTH extends JavaPlugin {
             }
         }
         return null;
+    }
+
+
+    /**
+     * Continually award one generic point to a team every minute a CapturePoint is held.
+     */
+    private void startScoreIncrementTask() {
+        new BukkitRunnable() {
+            public void run() {
+                for (CapturePoint cap : getCapturePoints().values()) {
+                    cap.awardTeamGenericPoint();
+                }
+            }
+        }.runTaskTimer(this, 10L, 10L);
     }
 
 

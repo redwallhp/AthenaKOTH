@@ -34,6 +34,7 @@ public class CapturePoint {
     private Player capturingPlayer;
     private CaptureTask captureTask;
     private BossBar captureBar;
+    private long timeLastScoreIncrement;
 
 
     public CapturePoint(Match match) throws IOException, ConfigurationException {
@@ -48,6 +49,7 @@ public class CapturePoint {
         this.capturingPlayer = null;
         this.captureTask = null;
         this.captureBar = null;
+        this.timeLastScoreIncrement = 0;
 
         this.beacon = new Vector(yaml.getInt("beacon.x"),  yaml.getInt("beacon.y"), yaml.getInt("beacon.z"));
         this.captureTime = yaml.getInt("capture_time", 6);
@@ -94,6 +96,7 @@ public class CapturePoint {
         PlayerScorePointEvent event = new PlayerScorePointEvent(capturingPlayer, capturingTeam, 1);
         Bukkit.getPluginManager().callEvent(event);
         stopCaptureTask();
+        this.timeLastScoreIncrement = System.currentTimeMillis();
     }
 
 
@@ -177,6 +180,23 @@ public class CapturePoint {
             progress = 1.0;
         }
         captureBar.setProgress(progress);
+    }
+
+
+    /**
+     * Award a generic score increase to a team, not associated with a player or capture event.
+     * This is invoked on a task so points accumulate the longer a CapturePoint is held.
+     * Score is updated if the point is owned by a team and is not currently being captured.
+     */
+    public void awardTeamGenericPoint() {
+        if (match.isPlaying() && owner != null && timeLastScoreIncrement > 0 && capturingTeam == null) {
+            long diff = System.currentTimeMillis() - timeLastScoreIncrement;
+            if (diff >= 60000) {
+                owner.incrementPoints();
+                owner.getMatch().playSound(Sound.UI_BUTTON_CLICK);
+                timeLastScoreIncrement = System.currentTimeMillis();
+            }
+        }
     }
 
 

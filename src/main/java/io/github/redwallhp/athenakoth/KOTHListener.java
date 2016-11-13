@@ -3,9 +3,12 @@ package io.github.redwallhp.athenakoth;
 
 import io.github.redwallhp.athenagm.arenas.Arena;
 import io.github.redwallhp.athenagm.events.MatchCreateEvent;
+import io.github.redwallhp.athenagm.events.MatchStateChangedEvent;
 import io.github.redwallhp.athenagm.matches.Match;
+import io.github.redwallhp.athenagm.matches.MatchState;
 import io.github.redwallhp.athenagm.matches.Team;
 import io.github.redwallhp.athenagm.utilities.PlayerUtil;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,6 +45,29 @@ public class KOTHListener implements Listener {
 
 
     /**
+     * Clean up CapturePoint objects to avoid leaking memory.
+     * Also, prevent tie games.
+     */
+    @EventHandler
+    public void onMatchStateChanged(MatchStateChangedEvent event) {
+        if (event.getCurrentState().equals(MatchState.ENDED)) {
+            if (plugin.getCapturePoints().containsKey(event.getMatch())) {
+                CapturePoint cap = plugin.getCapturePoints().get(event.getMatch());
+                // Award a point for holding the CapturePoint at the end of the match
+                cap.getOwner().incrementPoints();
+                cap.getOwner().getMatch().playSound(Sound.UI_BUTTON_CLICK);
+                // Prevent tie game conditions
+                if (isMatchTied(event.getMatch())) {
+                    cap.getOwner().incrementPoints();
+                }
+                // Clean up old capture point objects
+                plugin.getCapturePoints().remove(event.getMatch());
+            }
+        }
+    }
+
+
+    /**
      * Initiate the capture process when a player interacts with the beacon or its glass.
      */
     @EventHandler
@@ -59,6 +85,27 @@ public class KOTHListener implements Listener {
                 cap.startCapture(plugin, playerTeam, event.getPlayer());
             }
         }
+    }
+
+
+    /**
+     * Returns whether the Match score is tied or not
+     * @return true if the Match is tied
+     */
+    private boolean isMatchTied(Match match) {
+        Team highest = null;
+        boolean isTied = false;
+        for (Team t : match.getTeams().values()) {
+            if (highest == null || t.getPoints() > highest.getPoints()) {
+                highest = t;
+            }
+        }
+        for (Team t : match.getTeams().values()) {
+            if (highest != null && t != highest && t.getPoints() == highest.getPoints()) {
+                isTied = true;
+            }
+        }
+        return isTied;
     }
 
 
