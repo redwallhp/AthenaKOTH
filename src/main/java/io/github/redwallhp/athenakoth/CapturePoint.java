@@ -12,6 +12,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -124,8 +125,7 @@ public class CapturePoint {
         glass.setType(Material.STAINED_GLASS);
         if (owner == null) {
             // set the color to be white
-            DyeColor dye = DyeColor.getByColor(Color.WHITE);
-            glass.setData(dye.getData());
+            glass.setData(ItemUtil.getDyeColorByte("white"));
         } else {
             // set the color to be the owner team's color
             byte data = ItemUtil.getDyeColorByte(owner.getColor());
